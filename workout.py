@@ -52,15 +52,15 @@ def render_workout(df):
     for date_obj, vol in daily_vol.items():
         idx = (date_obj - dates[0]).days
         values[idx] = vol
+        st.write("dates type:", type(dates), "len:", len(dates))
+        st.write("values type:", type(values), "len:", len(values))
+        st.write("values sample:", values[:5])
+        st.write("daily_vol:", daily_vol)
 
     # 4. Lesley
     import lesley
     fig = lesley.cal_heatmap(dates, values)
     st.pyplot(fig)
-    st.write("dates type:", type(dates), "len:", len(dates))
-    st.write("values type:", type(values), "len:", len(values))
-    st.write("values sample:", values[:5])
-    st.write("daily_vol:", daily_vol)
 
 
 
