@@ -38,7 +38,7 @@ def render_workout(df):
     daily = df.groupby(df['Date'].dt.date)['Volume'].sum().reset_index()
     daily.columns = ['date', 'value']
     daily['date'] = pd.to_datetime(daily['date'])
-    fig = cp.calplot(daily, x="date", y="value", year_title=True)
+    fig = cp.calplot(daily, x="date", y="value", years_title=True)
     st.plotly_chart(fig, use_container_width=True)
     
     # 📈 Top Esercizi (bonus)
