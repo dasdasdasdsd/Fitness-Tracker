@@ -45,18 +45,22 @@ def render_workout(df):
     # 2. Full anno dinamico
     import numpy as np
     year = df['Date'].dt.year.max()
-    dates = pd.date_range(f"{"2026"}-01-01", f"{"2026"}-12-31")
+    dates = pd.date_range(f"{year}-01-01", f"{year}-12-31")
     values = np.zeros(len(dates))
 
     # 3. Riempi TUOI dati
-    # for date_obj, vol in daily_vol.items():
-    #     idx = (date_obj - dates[0]).days
-    #     values[idx] = vol
+    for date_obj, vol in daily_vol.items():
+        idx = (date_obj - dates[0]).days
+        values[idx] = vol
 
     # 4. Lesley
     import lesley
-    fig = lesley.cal_heatmap(dates, df['Volume'])
+    fig = lesley.cal_heatmap(dates, values)
     st.pyplot(fig)
+    st.write("dates type:", type(dates), "len:", len(dates))
+    st.write("values type:", type(values), "len:", len(values))
+    st.write("values sample:", values[:5])
+    st.write("daily_vol:", daily_vol)
 
 
 
