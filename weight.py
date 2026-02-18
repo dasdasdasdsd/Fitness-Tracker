@@ -4,7 +4,6 @@ import pandas as pd
 from datetime import datetime
 
 def render_weight(df_weight):
-    st.subheader("⚖️ Andamento Peso")
 
     # Inizializza session state per il mese
     if 'selected_month' not in st.session_state:
@@ -26,8 +25,6 @@ def render_weight(df_weight):
         if st.button("▶", key="next_month"):
             st.session_state.selected_month = (st.session_state.selected_month + pd.DateOffset(months=1)).replace(day=1)
             st.rerun()
-
-    st.markdown("---")
 
     # Carica e filtra dati per il mese selezionato
     if not df_weight.empty:
@@ -156,7 +153,3 @@ def render_weight(df_weight):
 
     st.markdown("---")
 
-    if not df_weight.empty:
-        st.dataframe(df_weight, use_container_width=True)
-    else:
-        st.warning("⚠️ Nessun dato disponibile")
