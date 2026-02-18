@@ -43,7 +43,7 @@ def render_workout(df):
     daily_volume['date'] = pd.to_datetime(daily_volume['date'])
     # daily_volume già calcolato (da prima)
     year = df['Date'].dt.year.max()
-    dates = pd.date_range(f"{year}-01-01", f"{year}-12-31")
+    dates = pd.date_range(f"2026-01-01", f"2026-12-31")
     values = np.zeros(len(dates))
     lesley.cal_heatmap(values, daily_volume)
 
