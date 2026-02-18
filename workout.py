@@ -49,9 +49,13 @@ def render_workout(df):
     values = np.zeros(len(dates))
 
     # 3. Riempi TUOI dati
+# 3. Riempi TUOI dati (FIX)
     for date_obj, vol in daily_vol.items():
-        idx = (date_obj - dates[0]).days
-        values[idx] = vol
+        ts = pd.Timestamp(date_obj)  # Fix tipo!
+        if dates[0] <= ts <= dates[-1]:  # Evita out of range
+            idx = (ts - dates[0]).days
+            values[idx] = vol
+
         st.write("dates type:", type(dates), "len:", len(dates))
         st.write("values type:", type(values), "len:", len(values))
         st.write("values sample:", values[:5])
