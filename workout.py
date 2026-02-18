@@ -45,7 +45,6 @@ def render_workout(df):
     fig = lesley.cal_heatmap(
         daily_volume['date'].tolist(),
         daily_volume['value'].tolist(),
-        figsize=(14, 2.5),
         linewidth=0.5,
         cmap="Greens"
     )
