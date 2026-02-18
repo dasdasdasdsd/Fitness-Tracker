@@ -36,19 +36,28 @@ def render_workout(df):
     
         # Dopo metriche in workout.py
     st.subheader("📅 Heatmap stile GitHub")
+
+    # 1. Calcola daily
     df['Weight_num'] = pd.to_numeric(df['Weight'], errors='coerce').fillna(0)
     df['Volume'] = df['Sets'] * df['Reps'] * df['Weight_num']
-    daily_volume = df.groupby(df['Date'].dt.date)['Volume'].sum().reset_index()
-    daily_volume.columns = ['date', 'value']
-    daily_volume['date'] = pd.to_datetime(daily_volume['date'])
-    # daily_volume già calcolato (da prima)
+    daily_vol = df.groupby(df['Date'].dt.date)['Volume'].sum()  # Series!
+
+    # 2. Full anno dinamico
+    import numpy as np
     year = df['Date'].dt.year.max()
     dates = pd.date_range(f"{year}-01-01", f"{year}-12-31")
     values = np.zeros(len(dates))
-    for _, row in daily_volume.iterrows():
-        idx = dates.get_loc(row['date'])
-        values[idx] = row['value']
-    lesley.cal_heatmap(values, daily_volume)
+
+    # 3. Riempi TUOI dati
+    for date_obj, vol in daily_vol.items():
+        idx = (date_obj - dates[0]).days
+        values[idx] = vol
+
+    # 4. Lesley
+    import lesley
+    fig = lesley.cal_heatmap(dates, values)
+    st.pyplot(fig)
+
 
 
     
