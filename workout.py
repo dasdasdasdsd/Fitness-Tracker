@@ -37,7 +37,7 @@ def render_workout(df):
 
     st.markdown("---")
 
-    # ── 5. Heatmap GitHub-style ────────────────────────────────────
+    # ── 5. Heatmap GitHub-style con cerchi ─────────────────────────
     st.subheader("📅 Heatmap Allenamenti")
 
     daily_vol = df.groupby(df['Date'].dt.normalize())['Volume'].sum()
@@ -52,36 +52,38 @@ def render_workout(df):
             values[idx] = vol
 
     # Offset prima colonna come GitHub
-    days_labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     first_weekday = dates[0].weekday()  # 0=Mon, 6=Sun
+    days_labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-    grid = np.full((7, 54), np.nan)
-    text = [[""] * 54 for _ in range(7)]
+    x_vals, y_vals, colors, hover = [], [], [], []
 
     for i, (date, val) in enumerate(zip(dates, values)):
         col_idx = (i + first_weekday) // 7
         day_idx = date.weekday()
-        grid[day_idx][col_idx] = val
-        text[day_idx][col_idx] = f"{date.strftime('%d %b')}: {int(val)} vol"
+        x_vals.append(col_idx)
+        y_vals.append(day_idx)
+        colors.append(float(val))
+        hover.append(f"{date.strftime('%d %b %Y')}: {int(val)} vol")
 
-    # Colorscale: grigio per 0, blu per workout
-    colorscale = [
-        [0.0,   "#2d2d2d"],  # 0 → grigio scuro
-        [0.001, "#1e3a5f"],  # quasi 0 → blu scuro
-        [0.5,   "#2980b9"],  # medio → blu
-        [1.0,   "#85c1e9"],  # massimo → azzurro chiaro
-    ]
-
-    fig = go.Figure(go.Heatmap(
-        z=grid,
-        text=text,
-        symbol="star",
+    fig = go.Figure(go.Scatter(
+        x=x_vals,
+        y=y_vals,
+        mode='markers',
+        marker=dict(
+            symbol='circle',
+            size=11,
+            color=colors,
+            colorscale=[
+                [0.0,   "#2d2d2d"],  # vuoto → grigio scuro
+                [0.001, "#1e3a5f"],  # minimo → blu scuro
+                [0.5,   "#2980b9"],  # medio  → blu
+                [1.0,   "#85c1e9"],  # massimo→ azzurro chiaro
+            ],
+            showscale=False,
+            cmin=0,
+        ),
+        text=hover,
         hovertemplate="%{text}<extra></extra>",
-        colorscale=colorscale,
-        showscale=False,
-        xgap=3,
-        ygap=3,
-        zmin=0,
     ))
 
     # Mesi sull'asse X
@@ -95,18 +97,22 @@ def render_workout(df):
         month_labels.append(first_day.strftime('%b'))
 
     fig.update_layout(
-        height=180,
+        height=200,
         margin=dict(l=40, r=10, t=10, b=40),
         yaxis=dict(
             tickmode='array',
             tickvals=list(range(7)),
             ticktext=days_labels,
             autorange='reversed',
+            showgrid=False,
+            zeroline=False,
         ),
         xaxis=dict(
             tickmode='array',
             tickvals=month_positions,
             ticktext=month_labels,
+            showgrid=False,
+            zeroline=False,
         ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
