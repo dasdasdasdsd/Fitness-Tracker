@@ -40,15 +40,16 @@ def render_workout(df):
     daily_volume.columns = ['date', 'value']
     daily_volume['date'] = pd.to_datetime(daily_volume['date'])
     # daily_volume già calcolato (da prima)
-    if not daily_volume.empty:
-        import lesley
-        fig = lesley.cal_heatmap(
-            daily_volume['date'], 
-            daily_volume['value']
-        )
-        st.pyplot(fig)
-    else:
-        st.info("Aggiungi dati!")
+    st.subheader("📅 Heatmap GitHub-style")
+    import lesley
+    fig = lesley.cal_heatmap(
+        daily_volume['date'].tolist(),
+        daily_volume['value'].tolist(),
+        figsize=(14, 2.5),
+        linewidth=0.5,
+        cmap="Greens"
+    )
+    st.pyplot(fig)
 
     
     # 📈 Top Esercizi (bonus)
