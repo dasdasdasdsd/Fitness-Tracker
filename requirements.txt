@@ -6,4 +6,5 @@ plotly
 openpyxl
 lesley
 matplotlib
-
+numpy
+oauth2client
