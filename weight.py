@@ -104,6 +104,7 @@ def render_weight(df_weight):
             fig.update_layout(
                 title="",
                 xaxis_title="",
+                height=350,
                 yaxis_title="",
                 showlegend=False,
                 plot_bgcolor='rgba(0,0,0,0)',
@@ -132,7 +133,7 @@ def render_weight(df_weight):
                 range=[0, max_weight+5]
             )
 
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, height=350)
 
             # Statistiche
             df_stats = df_filtered if not df_filtered.empty else df_weight
