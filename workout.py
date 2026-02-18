@@ -55,7 +55,7 @@ def render_workout(df):
 
     # 4. Lesley
     import lesley
-    fig = lesley.cal_heatmap(dates, values)
+    fig = lesley.cal_heatmap(dates, df['Volume'])
     st.pyplot(fig)
 
 
