@@ -80,20 +80,20 @@ if 'page' not in st.session_state:
 st.sidebar.title("🔧 Menu")
 
 # 4 bottoni verticali
-if st.sidebar.button("🏠 Home", key="btn_home", use_container_width=True):
+if st.sidebar.button("Home", key="btn_home", use_container_width=True):
     st.sidebar.success("🏠 Home selezionata!")
     st.session_state.page = "Home"
     st.rerun()
 
-if st.sidebar.button("🍎 Nutrition", key="btn_nutrition", use_container_width=True):
+if st.sidebar.button("Nutrition", key="btn_nutrition", use_container_width=True):
     st.session_state.page = "Nutrition"
     st.rerun()
 
-if st.sidebar.button("⚖️ Weight", key="btn_weight", use_container_width=True):
+if st.sidebar.button("Weight", key="btn_weight", use_container_width=True):
     st.session_state.page = "Weight"
     st.rerun()
 
-if st.sidebar.button("💪 Workout", key="btn_workout", use_container_width=True):
+if st.sidebar.button("Workout", key="btn_workout", use_container_width=True):
     st.session_state.page = "Workout"
     st.rerun()
 

@@ -135,20 +135,17 @@ def render_weight(df_weight):
 
             st.plotly_chart(fig, use_container_width=True, height=350)
 
-            # Statistiche
+# Statistiche peso (stack su mobile)
             df_stats = df_filtered if not df_filtered.empty else df_weight
-
-            col1, col2, col3, col4 = st.columns(4)
+            col1, col2 = st.columns(2)
             with col1:
-                st.metric("Weight Attuale", f"{df_stats[weight_col].iloc[-1]:.1f} kg")
+                st.metric("Weight Attuale", f"{df_stats[weight_col].iloc[-1]:.1f} kg", use_container_width=True)
+                st.metric("Weight Max", f"{df_stats[weight_col].max():.1f} kg", use_container_width=True)
             with col2:
-                weight_iniziale = df_stats[weight_col].iloc[0]
-                variazione = df_stats[weight_col].iloc[-1] - weight_iniziale
-                st.metric("Weight Iniziale", f"{weight_iniziale:.1f} kg", f"{variazione:+.1f} kg")
-            with col3:
-                st.metric("Weight Max", f"{df_stats[weight_col].max():.1f} kg")
-            with col4:
-                st.metric("Weight Min", f"{df_stats[weight_col].min():.1f} kg")
+                variazione = df_stats[weight_col].iloc[-1] - df_stats[weight_col].iloc[0]
+                st.metric("Weight Iniziale", f"{df_stats[weight_col].iloc[0]:.1f} kg", f"{variazione:+.1f} kg", use_container_width=True)
+                st.metric("Weight Min", f"{df_stats[weight_col].min():.1f} kg", use_container_width=True)
+
         else:
             st.warning("⚠️ Colonne 'Date' e 'Weight' non trovate nel sheet")
     else:
