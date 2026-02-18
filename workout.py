@@ -49,9 +49,9 @@ def render_workout(df):
     values = np.zeros(len(dates))
 
     # 3. Riempi TUOI dati
-    for date_obj, vol in daily_vol.items():
-        idx = (date_obj - dates[0]).days
-        values[idx] = vol
+    # for date_obj, vol in daily_vol.items():
+    #     idx = (date_obj - dates[0]).days
+    #     values[idx] = vol
 
     # 4. Lesley
     import lesley
