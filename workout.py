@@ -10,13 +10,6 @@ def render_workout(df):
 
     with st.spinner("Caricamento dati..."):
         pass  # Dati già caricati da app.py
-    df = pd.DataFrame({
-        'Date': ['16/02/26', '16/02/26', '16/02/26', '16/02/26', '17/02/26', '17/02/26', '17/02/26', '17/02/26'],
-        'Exercise': ['panca', 'dips', 'skull crusher', 'pull down', 'leg raise', 'crunch', 'military press', 'face pull raises'],
-        'Sets': [3,4,3,4,4,3,3,3],
-        'Reps': [8,10,10,10,15,10,10,8],
-        'Weight': [36,0,0,18,0,30,32,21]  # bw=0
-    })
 
     # Parse date
     df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%y')
