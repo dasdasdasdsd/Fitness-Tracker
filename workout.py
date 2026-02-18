@@ -44,8 +44,7 @@ def render_workout(df):
         import lesley
         fig = lesley.cal_heatmap(
             daily_volume['date'], 
-            daily_volume['value'],
-            figsize=(12, 2),  # Compatto
+            daily_volume['value'],  # Compatto
             year_label="2026 Workout"  # Custom title
         )
         st.pyplot(fig)
