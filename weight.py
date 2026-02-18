@@ -137,13 +137,13 @@ def render_weight(df_weight):
 
             col1, col2, col3, col4 = st.columns(4)
             with col1:
-                st.metric("Weight Attuale", f"{df_stats[weight_col].iloc[-1]:.1f} kg")
+                st.metric("Current Weight", f"{df_stats[weight_col].iloc[-1]:.1f} kg")
             with col2:
                 weight_iniziale = df_stats[weight_col].iloc[0]
                 variazione = df_stats[weight_col].iloc[-1] - weight_iniziale
-                st.metric("Weight Iniziale", f"{weight_iniziale:.1f} kg", f"{variazione:+.1f} kg")
+                st.metric("Starting Weight", f"{weight_iniziale:.1f} kg", f"{variazione:+.1f} kg")
             with col3:
-                st.metric("Weight Max", f"{df_stats[weight_col].max():.1f} kg")
+                st.metric("Max Weight", f"{df_stats[weight_col].max():.1f} kg")
             with col4:
                 st.metric("Weight Min", f"{df_stats[weight_col].min():.1f} kg")
         else:
