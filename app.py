@@ -27,8 +27,8 @@ Workout_sheet = "https://docs.google.com/spreadsheets/d/1APCir1V_w2xzZEvTmTbl8eB
 def get_google_sheets_client():
     """Connessione a Google Sheets usando service account"""
     try:
-        credentials = Credentials.from_service_account_file(
-            'concise-upgrade-428317-d7-7b2192f7f944.json',
+        credentials = Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
             scopes=SCOPES
         )
         client = gspread.authorize(credentials)
