@@ -65,8 +65,7 @@ def render_workout(df):
     fig = go.Figure(go.Heatmap(
         z=grid,
         text=text,
-        hovertemplate="%{text}<extra></extra>",
-        colorscale="Greens",
+        colorscale="Reds",
         showscale=False,
         xgap=3,
         ygap=3,
