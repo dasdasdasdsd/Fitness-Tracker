@@ -32,7 +32,7 @@ def render_workout(df):
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Sessioni", df['Date'].dt.date.nunique())
     col2.metric("Esercizi unici", df['Exercise'].nunique() if 'Exercise' in df.columns else 0)
-    col3.metric("Volume totale", f"{df['Volume'].sum():,.0f}")
+    col3.metric("Volume totale", f"{df['Volume'].sum():,.0f} Kg")
     col4.metric("Giorni loggati", df['Date'].dt.date.nunique())
 
     st.markdown("---")
@@ -75,8 +75,8 @@ def render_workout(df):
             color=colors,
             colorscale=[
                 [0.0,   "#2d2d2d"],  # vuoto → grigio scuro
-                [0.001, "#FFA366"],  # minimo → blu scuro
-                [0.5,   "#FF8533"],  # medio  → blu
+                [0.001, "#DF9A6C"],  # minimo → blu scuro
+                [0.5,   "#E99257"],  # medio  → blu
                 [1.0,   "#FF6A00"],  # massimo→ azzurro chiaro
             ],
             showscale=False,
@@ -159,12 +159,3 @@ def render_workout(df):
         height=400
     )
 
-    # ── 8. Download ────────────────────────────────────────────────
-    csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="📥 Scarica CSV",
-        data=csv,
-        file_name=f"workout_{datetime.now().strftime('%Y%m%d')}.csv",
-        mime="text/csv",
-        use_container_width=True,
-    )
