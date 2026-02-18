@@ -51,36 +51,62 @@ def render_workout(df):
             idx = (ts - dates[0]).days
             values[idx] = vol
 
-    # Griglia 7 x 53
+    # Offset prima colonna come GitHub
     days_labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    grid = np.full((7, 53), np.nan)
-    text = [[""] * 53 for _ in range(7)]
+    first_weekday = dates[0].weekday()  # 0=Mon, 6=Sun
+
+    grid = np.full((7, 54), np.nan)
+    text = [[""] * 54 for _ in range(7)]
 
     for i, (date, val) in enumerate(zip(dates, values)):
-        col_idx = i // 7
+        col_idx = (i + first_weekday) // 7
         day_idx = date.weekday()
         grid[day_idx][col_idx] = val
         text[day_idx][col_idx] = f"{date.strftime('%d %b')}: {int(val)} vol"
 
+    # Colorscale: grigio per 0, blu per workout
+    colorscale = [
+        [0.0,   "#2d2d2d"],  # 0 → grigio scuro
+        [0.001, "#1e3a5f"],  # quasi 0 → blu scuro
+        [0.5,   "#2980b9"],  # medio → blu
+        [1.0,   "#85c1e9"],  # massimo → azzurro chiaro
+    ]
+
     fig = go.Figure(go.Heatmap(
         z=grid,
         text=text,
-        colorscale="Reds",
+        hovertemplate="%{text}<extra></extra>",
+        colorscale=colorscale,
         showscale=False,
         xgap=3,
         ygap=3,
+        zmin=0,
     ))
+
+    # Mesi sull'asse X
+    month_positions = []
+    month_labels = []
+    for month in range(1, 13):
+        first_day = pd.Timestamp(f"{year}-{month:02d}-01")
+        day_of_year = (first_day - dates[0]).days
+        col = (day_of_year + first_weekday) // 7
+        month_positions.append(col)
+        month_labels.append(first_day.strftime('%b'))
 
     fig.update_layout(
         height=180,
-        margin=dict(l=40, r=10, t=10, b=30),
+        margin=dict(l=40, r=10, t=10, b=40),
         yaxis=dict(
             tickmode='array',
             tickvals=list(range(7)),
             ticktext=days_labels,
-            autorange='reversed'
+            autorange='reversed',
         ),
-        xaxis=dict(showticklabels=False),
+        xaxis=dict(
+            tickmode='array',
+            tickvals=month_positions,
+            ticktext=month_labels,
+        ),
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
     )
@@ -104,7 +130,7 @@ def render_workout(df):
             orientation='h',
             labels={'x': 'Volume (kg×reps×sets)', 'y': ''},
             color=top_vol.values,
-            color_continuous_scale='Greens',
+            color_continuous_scale='Blues',
         )
         fig2.update_layout(
             height=350,
@@ -120,7 +146,11 @@ def render_workout(df):
 
     # ── 7. Tabella dati ────────────────────────────────────────────
     st.subheader("🔍 Dati Allenamenti")
-    st.dataframe(df.drop(columns=['Volume']), use_container_width=True, height=400)
+    st.dataframe(
+        df.drop(columns=['Volume']),
+        use_container_width=True,
+        height=400
+    )
 
     # ── 8. Download ────────────────────────────────────────────────
     csv = df.to_csv(index=False).encode('utf-8')
