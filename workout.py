@@ -71,13 +71,13 @@ def render_workout(df):
         mode='markers',
         marker=dict(
             symbol='circle',
-            size=15,
+            size=13,
             color=colors,
             colorscale=[
                 [0.0,   "#2d2d2d"],  # vuoto → grigio scuro
                 [0.001, "#FFA366"],  # minimo → blu scuro
-                [0.5,   "#FF6A00"],  # medio  → blu
-                [1.0,   "#FF3300"],  # massimo→ azzurro chiaro
+                [0.5,   "#FF8533"],  # medio  → blu
+                [1.0,   "#FF6A00"],  # massimo→ azzurro chiaro
             ],
             showscale=False,
             cmin=0,
