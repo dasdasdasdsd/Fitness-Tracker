@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import numpy as np
+import lesley
 
 def render_workout(df):
     st.header("💪 Workout")
@@ -40,15 +42,11 @@ def render_workout(df):
     daily_volume.columns = ['date', 'value']
     daily_volume['date'] = pd.to_datetime(daily_volume['date'])
     # daily_volume già calcolato (da prima)
-    st.subheader("📅 Heatmap GitHub-style")
-    import lesley
-    fig = lesley.cal_heatmap(
-        daily_volume['date'].tolist(),
-        daily_volume['value'].tolist(),
-        linewidth=0.5,
-        cmap="Greens"
-    )
-    st.pyplot(fig)
+    year = df['Date'].dt.year.max()
+    dates = pd.date_range(f"{year}-01-01", f"{year}-12-31")
+    values = np.zeros(len(dates))
+    lesley.cal_heatmap(values, daily_volume)
+
 
     
     # 📈 Top Esercizi (bonus)
