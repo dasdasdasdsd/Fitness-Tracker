@@ -22,6 +22,7 @@ SCOPES = [
 Nutrition_sheet = "https://docs.google.com/spreadsheets/d/1BeB5VgoyUWgtEhittnd4wtfglFZfT5ARUPTMAS39gR8/edit?gid=0#gid=0"
 Weight_sheet = "https://docs.google.com/spreadsheets/d/1MpQxnKmDatxAPBqZI7GXbwsLESUifHUDAwn25Eh_KRE/edit?gid=0#gid=0"
 Workout_sheet = "https://docs.google.com/spreadsheets/d/1APCir1V_w2xzZEvTmTbl8eBDj0eloH33RF2LrQRJTZ8/edit?gid=0#gid=0"
+Muscles_sheet = "https://docs.google.com/spreadsheets/d/1APCir1V_w2xzZEvTmTbl8eBDj0eloH33RF2LrQRJTZ8/edit?gid=370686603#gid=370686603"
 
 @st.cache_resource
 def get_google_sheets_client():
@@ -121,13 +122,14 @@ st.markdown("---")
 df_weight = load_google_sheet(Weight_sheet)
 df_nutrition = load_google_sheet(Nutrition_sheet)
 df_workout = load_google_sheet(Workout_sheet)
+df_muscle = load_google_sheet(Muscles_sheet)
 
 # Routing pagine
 if page == "Home":
-    render_home(df_weight, df_nutrition, df_workout)
+    render_home(df_weight, df_nutrition, df_workout, df_muscle)
 elif page == "Nutrition":
     render_nutrition(df_nutrition)
 elif page == "Weight":
     render_weight(df_weight)
 elif page == "Workout":
-    render_workout(df_workout)
+    render_workout(df_workout, df_muscle)

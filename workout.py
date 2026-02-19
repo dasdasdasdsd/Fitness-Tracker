@@ -122,34 +122,6 @@ def render_workout(df):
 
     st.markdown("---")
 
-    # ── 6. Top Esercizi per Volume ─────────────────────────────────
-    if 'Exercise' in df.columns:
-        st.subheader("🏆 Top Esercizi (Volume)")
-        top_vol = (
-            df.groupby('Exercise')['Volume']
-            .sum()
-            .sort_values(ascending=True)
-            .tail(10)
-        )
-        fig2 = px.bar(
-            x=top_vol.values,
-            y=top_vol.index,
-            orientation='h',
-            labels={'x': 'Volume (kg×reps×sets)', 'y': ''},
-            color=top_vol.values,
-            color_continuous_scale='Blues',
-        )
-        fig2.update_layout(
-            height=350,
-            showlegend=False,
-            coloraxis_showscale=False,
-            plot_bgcolor='rgba(0,0,0,0)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            margin=dict(l=10, r=10, t=10, b=10),
-        )
-        st.plotly_chart(fig2, use_container_width=True)
-
-    st.markdown("---")
 
     # ── 7. Tabella dati ────────────────────────────────────────────
     st.subheader("🔍 Dati Allenamenti")
