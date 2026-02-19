@@ -76,6 +76,7 @@ st.set_page_config(
 
 if 'page' not in st.session_state:
     st.session_state.page = "Home"
+    st.error(f"{st.secrets["NOTION_TOKEN"]}")
 
 st.sidebar.title("🔧 Menu")
 
