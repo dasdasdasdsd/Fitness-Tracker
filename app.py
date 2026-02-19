@@ -61,10 +61,13 @@ def get_notion_client():
 
 @st.cache_data(ttl=3600)
 def get_exercise_library():
-    notion = get_notion_client()
+    from notion_client import Client
+    notion = Client(auth=st.secrets.gcp_service_account.notion)  # ✅
     results = notion.databases.query(
         database_id=st.secrets["EXERCISE_LIB_ID"]
     )
+    return results
+
     library = {}
     for page in results["results"]:
         props = page["properties"]
