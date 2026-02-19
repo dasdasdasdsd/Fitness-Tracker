@@ -63,7 +63,7 @@ def get_notion_client() -> Client:
 @st.cache_data(ttl=3600)
 def get_exercise_library() -> dict:
     notion = get_notion_client()
-    db_id = st.secrets["EXERCISE_LIB_ID"]
+    db_id =st.secrets["gcp_service_account"]["EXERCISE_LIB_ID"]
 
     results = notion.databases.query(database_id=db_id)
 
