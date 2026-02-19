@@ -39,7 +39,7 @@ def get_google_sheets_client():
         return None
 
 @st.cache_data(ttl=300)  # Cache per 5 minuti
-def load_google_sheet(sheet_url, worksheet_name=None):
+def load_google_sheet(sheet_url, worksheet_name):
     """Carica dati da Google Sheet"""
     try:
         client = get_google_sheets_client()
@@ -119,10 +119,10 @@ st.markdown("---")
 # ============================================
 
 # Carica i dati
-df_weight = load_google_sheet(Weight_sheet)
-df_nutrition = load_google_sheet(Nutrition_sheet)
-df_workout = load_google_sheet(Workout_sheet)
-df_muscle = load_google_sheet(Muscles_sheet)
+df_weight = load_google_sheet(Weight_sheet,"Foglio1")
+df_nutrition = load_google_sheet(Nutrition_sheet,"Foglio1")
+df_workout = load_google_sheet(Workout_sheet,"Foglio1")
+df_muscle = load_google_sheet(Muscles_sheet,"Foglio2")
 
 # Routing pagine
 if page == "Home":
