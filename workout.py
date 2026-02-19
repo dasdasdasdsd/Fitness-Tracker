@@ -6,7 +6,7 @@ import plotly.express as px
 from datetime import datetime
 
 
-def render_workout(df):
+def render_workout(df,muscles_df):
     st.header("💪 Workout")
 
     if df.empty:
