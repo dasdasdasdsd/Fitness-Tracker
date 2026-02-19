@@ -9,9 +9,7 @@ from weight import render_weight
 from nutrition import render_nutrition
 from workout import render_workout
 
-if 'secrets_checked' not in st.session_state:
-    st.write("st.secrets:",st.secrets)
-    st.session_state.secrets_checked = True
+
 
 # ============================================
 # CONFIGURAZIONE GOOGLE SHEETS
@@ -54,7 +52,9 @@ def load_google_sheet(sheet_url):
 # ============================================
 # CONFIGURAZIONE NOTION
 # ============================================
-
+if 'secrets_checked' not in st.session_state:
+    st.write("st.secrets:",st.secrets)
+    st.session_state.secrets_checked = True
 @st.cache_resource
 def get_notion_client():
     return Client(auth=st.secrets["notion"])
