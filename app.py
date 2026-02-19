@@ -95,7 +95,7 @@ def get_workout_data() -> pd.DataFrame:
     start_cursor = None
 
     while has_more:
-        kwargs = {"database_id": st.secrets["WORKOUT_DB_ID"]}
+        kwargs = {"database_id": st.secrets["gcp_service_account"]["WORKOUT_DB_ID"]}
         if start_cursor:
             kwargs["start_cursor"] = start_cursor
 
