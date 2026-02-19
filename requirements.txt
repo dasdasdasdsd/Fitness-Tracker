@@ -8,4 +8,4 @@ lesley
 matplotlib
 numpy
 oauth2client
-notion-client
+notion-client>=2.2.1
