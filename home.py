@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import pandas as pd
 from datetime import datetime
 
-def render_home(df_weight, df_nutrition, df_workout):
+def render_home(df_weight, df_nutrition, df_workout, df_muscle):
     """Renderizza la pagina Home"""
 
     st.header("🏠 Dashboard")
@@ -18,7 +18,7 @@ def render_home(df_weight, df_nutrition, df_workout):
     # METRICHE GENERALI
     # ============================================
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         st.metric(
@@ -36,4 +36,9 @@ def render_home(df_weight, df_nutrition, df_workout):
         st.metric(
             label="💪 Allenamenti",
             value=len(df_workout) if not df_workout.empty else 0
+        )
+    with col4:
+        st.metric(
+            label="📅 Muscoli",
+            value=len(df_muscle) if not df_muscle.empty else 0
         )
