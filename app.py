@@ -128,7 +128,7 @@ df_muscle = load_google_sheet(Muscles_sheet)
 if page == "Home":
     render_home(df_weight, df_nutrition, df_workout, df_muscle)
 elif page == "Nutrition":
-    render_nutrition(df_nutrition)
+    render_nutrition(df_muscle)
 elif page == "Weight":
     render_weight(df_weight)
 elif page == "Workout":
