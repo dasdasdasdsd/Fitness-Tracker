@@ -9,6 +9,9 @@ from weight import render_weight
 from nutrition import render_nutrition
 from workout import render_workout
 
+if 'secrets_checked' not in st.session_state:
+    st.write("✅ Secrets OK:", 'NOTION_TOKEN' in st.secrets)
+    st.session_state.secrets_checked = True
 
 # ============================================
 # CONFIGURAZIONE GOOGLE SHEETS
