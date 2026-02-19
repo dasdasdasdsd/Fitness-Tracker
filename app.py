@@ -1,113 +1,133 @@
 import streamlit as st
+from datetime import datetime
 import pandas as pd
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-from notion_client import Client
+from google.oauth2.service_account import Credentials
+from home import render_home
+from weight import render_weight
+from nutrition import render_nutrition
+from workout import render_workout
 
-# ── Google Sheets ──────────────────────────────────────────────
+# ============================================
+# CONFIGURAZIONE GOOGLE SHEETS
+# ============================================
+
+# Scope per accedere a Google Sheets
+SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
+
+# URL dei Google Sheets
+Nutrition_sheet = "https://docs.google.com/spreadsheets/d/1BeB5VgoyUWgtEhittnd4wtfglFZfT5ARUPTMAS39gR8/edit?gid=0#gid=0"
+Weight_sheet = "https://docs.google.com/spreadsheets/d/1MpQxnKmDatxAPBqZI7GXbwsLESUifHUDAwn25Eh_KRE/edit?gid=0#gid=0"
+Workout_sheet = "https://docs.google.com/spreadsheets/d/1APCir1V_w2xzZEvTmTbl8eBDj0eloH33RF2LrQRJTZ8/edit?gid=0#gid=0"
+
 @st.cache_resource
-def get_sheets_client():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"], scope)
-    return gspread.authorize(creds)
+def get_google_sheets_client():
+    """Connessione a Google Sheets usando service account"""
+    try:
+        credentials = Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=SCOPES
+        )
+        client = gspread.authorize(credentials)
+        return client
+    except Exception as e:
+        st.error(f"Errore connessione Google Sheets: {e}")
+        return None
 
-@st.cache_data(ttl=300)
-def get_sheet_data(sheet_name):
-    client = get_sheets_client()
-    sheet = client.open(st.secrets["SHEET_NAME"]).worksheet(sheet_name)
-    return pd.DataFrame(sheet.get_all_records())
+@st.cache_data(ttl=300)  # Cache per 5 minuti
+def load_google_sheet(sheet_url, worksheet_name=None):
+    """Carica dati da Google Sheet"""
+    try:
+        client = get_google_sheets_client()
+        if client is None:
+            return pd.DataFrame()
 
-# ── Notion ─────────────────────────────────────────────────────
-@st.cache_resource
-def get_notion_client():
-    return Client(auth=st.secrets["NOTION_TOKEN"])
+        sheet = client.open_by_url(sheet_url)
 
-@st.cache_data(ttl=3600)
-def get_exercise_library():
-    notion = get_notion_client()
-    results = notion.databases.query(database_id=st.secrets["EXERCISE_LIB_ID"])
-    library = {}
-    for page in results["results"]:
-        props = page["properties"]
-        ex_id = page["id"]
-        name = props["Exercise"]["title"][0]["text"]["content"] if props["Exercise"]["title"] else ""
-        muscle = props["Muscle Group"]["select"]["name"] if props["Muscle Group"]["select"] else ""
-        ex_type = props["Type"]["select"]["name"] if props["Type"]["select"] else ""
-        library[ex_id] = {"name": name, "muscle_group": muscle, "type": ex_type}
-    return library
+        if worksheet_name:
+            worksheet = sheet.worksheet(worksheet_name)
+        else:
+            worksheet = sheet.sheet1
 
-@st.cache_data(ttl=300)
-def get_workout_data():
-    notion = get_notion_client()
-    library = get_exercise_library()
+        data = worksheet.get_all_records()
+        df = pd.DataFrame(data)
 
-    all_results = []
-    has_more = True
-    start_cursor = None
+        return df
+    except Exception as e:
+        st.error(f"Errore caricamento sheet: {e}")
+        return pd.DataFrame()
 
-    while has_more:
-        kwargs = {"database_id": st.secrets["WORKOUT_DB_ID"]}
-        if start_cursor:
-            kwargs["start_cursor"] = start_cursor
-        response = notion.databases.query(**kwargs)
-        all_results.extend(response["results"])
-        has_more = response["has_more"]
-        start_cursor = response.get("next_cursor")
+# ============================================
+# CONFIGURAZIONE PAGINA
+# ============================================
 
-    rows = []
-    for page in all_results:
-        props = page["properties"]
-        try:
-            date   = props["Date"]["date"]["start"] if props["Date"]["date"] else None
-            ex_id  = props["Exercise"]["relation"][0]["id"] if props["Exercise"]["relation"] else None
-            ex_name = library[ex_id]["name"] if ex_id and ex_id in library else ""
-            muscle  = library[ex_id]["muscle_group"] if ex_id and ex_id in library else ""
-            ex_type = library[ex_id]["type"] if ex_id and ex_id in library else ""
-            sets   = props["Sets"]["number"]
-            reps   = props["Reps"]["number"]
-            weight = props["Weight"]["number"]
-            rows.append({
-                "Date": date, "Exercise": ex_name,
-                "Muscle Group": muscle, "Type": ex_type,
-                "Sets": sets, "Reps": reps, "Weight": weight,
-            })
-        except Exception:
-            continue
+st.set_page_config(
+    page_title="Dashboard Allenamento e Nutrizione",
+    page_icon="📊",
+    layout="wide"
+)
 
-    df = pd.DataFrame(rows)
-    if not df.empty:
-        df["Date"] = pd.to_datetime(df["Date"])
-        for col in ["Sets", "Reps", "Weight"]:
-            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
-    return df
+# ============================================
+# SIDEBAR
+# ============================================
 
-# ── Sidebar ────────────────────────────────────────────────────
-if "page" not in st.session_state:
+if 'page' not in st.session_state:
     st.session_state.page = "Home"
 
-st.sidebar.title("🏋️ Fitness Tracker")
+st.sidebar.title("🔧 Menu")
 
-if st.sidebar.button("🏠 Home",      use_container_width=True): st.session_state.page = "Home";      st.rerun()
-if st.sidebar.button("⚖️ Weight",    use_container_width=True): st.session_state.page = "Weight";    st.rerun()
-if st.sidebar.button("💪 Workout",   use_container_width=True): st.session_state.page = "Workout";   st.rerun()
+# 4 bottoni verticali
+if st.sidebar.button("Home", key="btn_home", use_container_width=True):
+    st.sidebar.success("🏠 Home selezionata!")
+    st.session_state.page = "Home"
+    st.rerun()
 
-if st.sidebar.button("🔄 Refresh", use_container_width=True):
+if st.sidebar.button("Nutrition", key="btn_nutrition", use_container_width=True):
+    st.session_state.page = "Nutrition"
+    st.rerun()
+
+if st.sidebar.button("Weight", key="btn_weight", use_container_width=True):
+    st.session_state.page = "Weight"
+    st.rerun()
+
+if st.sidebar.button("Workout", key="btn_workout", use_container_width=True):
+    st.session_state.page = "Workout"
+    st.rerun()
+
+page = st.session_state.page 
+# Pulsante refresh
+if st.sidebar.button("🔄 Aggiorna dati"):
     st.cache_data.clear()
     st.rerun()
 
-page = st.session_state.page
+st.sidebar.markdown("---")
+st.sidebar.info(f"**Ultimo aggiornamento:**\n{datetime.now().strftime('%d/%m/%Y %H:%M')}")
 
-# ── Routing ────────────────────────────────────────────────────
+# ============================================
+# HEADER
+# ============================================
+
+st.title("Dashboard Allenamento e Nutrizione")
+st.markdown("---")
+
+# ============================================
+# CARICA DATI E ROUTING
+# ============================================
+
+# Carica i dati
+df_weight = load_google_sheet(Weight_sheet)
+df_nutrition = load_google_sheet(Nutrition_sheet)
+df_workout = load_google_sheet(Workout_sheet)
+
+# Routing pagine
 if page == "Home":
-    from home import render_home
-    render_home()
-
+    render_home(df_weight, df_nutrition, df_workout)
+elif page == "Nutrition":
+    render_nutrition(df_nutrition)
 elif page == "Weight":
-    from weight import render_weight
-    df_weight = get_sheet_data("Weight")  #← Google Sheets
     render_weight(df_weight)
-
 elif page == "Workout":
-    from workout import render_workout
-    df_workout = get_workout_data()       # ← Notion
     render_workout(df_workout)
