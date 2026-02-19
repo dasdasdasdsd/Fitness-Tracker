@@ -57,7 +57,7 @@ if 'secrets_checked' not in st.session_state:
     st.session_state.secrets_checked = True
 @st.cache_resource
 def get_notion_client():
-    return Client(auth=st.secrets["notion"])
+    return Client(auth=st.secrets["gcp_service_account"]["notion"])
 
 @st.cache_data(ttl=3600)
 def get_exercise_library():
