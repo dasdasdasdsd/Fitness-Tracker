@@ -57,7 +57,7 @@ def load_google_sheet(sheet_url):
 
 @st.cache_resource
 def get_notion_client():
-    return Client(auth=st.secrets["NOTION"])
+    return Client(auth=st.secrets["notion"])
 
 @st.cache_data(ttl=3600)
 def get_exercise_library():
