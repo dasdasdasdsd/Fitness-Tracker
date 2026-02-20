@@ -29,16 +29,15 @@ def render_workout(df,muscles_df):
 
     # ── 4. Metriche ────────────────────────────────────────────────
     st.subheader("📊 Stats")
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     col1.metric("Sessioni", df['Date'].dt.date.nunique())
     col2.metric("Esercizi unici", df['Exercise'].nunique() if 'Exercise' in df.columns else 0)
     col3.metric("Volume totale", f"{df['Volume'].sum():,.0f} Kg")
-    col4.metric("Giorni loggati", df['Date'].dt.date.nunique())
 
     st.markdown("---")
 
     # ── 5. Heatmap GitHub-style con cerchi ─────────────────────────
-    st.subheader("📅 Heatmap Allenamenti")
+    st.subheader("Costanza Allenamenti")
 
     daily_vol = df.groupby(df['Date'].dt.normalize())['Volume'].sum()
 
